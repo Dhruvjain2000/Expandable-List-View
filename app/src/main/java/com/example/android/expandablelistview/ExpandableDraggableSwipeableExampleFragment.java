@@ -70,7 +70,7 @@ public class ExpandableDraggableSwipeableExampleFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //noinspection ConstantConditions
+        //noinspection ConstantC onditions
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(requireContext());
 

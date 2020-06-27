@@ -17,13 +17,29 @@
 package com.example.android.expandablelistview.common.data;
 
 
-import androidx.core.util.Pair;
+import android.content.Intent;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.core.util.Pair;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.android.expandablelistview.common.model.Cart;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class ExampleExpandableDataProvider extends AbstractExpandableDataProvider {
     private List<Pair<GroupData, List<ChildData>>> mData;
@@ -37,25 +53,37 @@ public class ExampleExpandableDataProvider extends AbstractExpandableDataProvide
     private long mLastRemovedChildParentGroupId = -1;
     private int mLastRemovedChildPosition = -1;
 
-    public ExampleExpandableDataProvider() {
-        final String groupItems = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        final String childItems = "abc";
+    public static String groupItems = "", childItems = "";
+    public static ArrayList<Cart> cartContents = new ArrayList<Cart>();
+
+
+    public ExampleExpandableDataProvider(){
+
 
         mData = new LinkedList<>();
 
-        for (int i = 0; i < groupItems.length(); i++) {
+        for (int i = 0, j = 0; i < groupItems.length();i++) {
             final long groupId = i;
-            final String groupText = Character.toString(groupItems.charAt(i));
+            String groupText = "";
+
+            while(i < groupItems.length() && groupItems.charAt(i) != '$'){
+                groupText = groupText + Character.toString(groupItems.charAt(i));
+                i++;
+            }
             final ConcreteGroupData group = new ConcreteGroupData(groupId, groupText);
             final List<ChildData> children = new ArrayList<>();
 
-            for (int j = 0; j < childItems.length(); j++) {
-                final long childId = group.generateNewChildId();
-                final String childText = Character.toString(childItems.charAt(j));
+            for(int k = 0; k < 3; k++){
 
-                children.add(new ConcreteChildData(childId, childText));
+                String s = "";
+                while (j < childItems.length() && childItems.charAt(j) != '$') {
+                    s = s + childItems.charAt(j);
+                    j++;
+                }
+                j++;
+                long childId = group.generateNewChildId();
+                children.add(new ConcreteChildData(childId, s));
             }
-
             mData.add(new Pair<>(group, children));
         }
     }
@@ -285,4 +313,5 @@ public class ExampleExpandableDataProvider extends AbstractExpandableDataProvide
             this.mId = id;
         }
     }
+
 }
